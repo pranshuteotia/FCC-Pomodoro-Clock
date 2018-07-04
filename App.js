@@ -5,9 +5,9 @@ class TimerButtons extends React.Component {
     render() {
         return(
             <div className="item-container">
-                <button value={this.props.updateText} onClick={this.props.updatePos}><i className="fa fa-arrow-up"></i></button>
+                <button value={this.props.updateText} onClick={this.props.updatePos}><i className="fa fa-arrow-down"></i></button>
                 <span>{this.props.lenTxt}</span>
-                <button value={this.props.updateText} onClick={this.props.updateNeg}><i className="fa fa-arrow-down"></i></button>
+                <button value={this.props.updateText} onClick={this.props.updateNeg}><i className="fa fa-arrow-up"></i></button>
             </div>
         );
     }
@@ -22,7 +22,9 @@ class App extends React.Component {
             breakLength: 5,
             timerRunning: false,
             timer: 1500,
-            cls: play
+            breakTimer: 300,
+            cls: play,
+            currentCycle: 'Session'
         };
 
         this.incrementTime = this.incrementTime.bind(this);
@@ -34,26 +36,6 @@ class App extends React.Component {
 
     incrementTime(e) {
         if(e.currentTarget.value == "break") {
-            if(this.state.breakLength == 30 || this.state.timerRunning)
-                return;
-
-            this.setState({
-                breakLength: this.state.breakLength+1
-            });
-        }
-
-        else {
-            if(this.state.currentSession == 60 || this.state.timerRunning)
-                return;
-
-            this.setState({
-                currentSession: this.state.currentSession+1
-            });
-        }
-    }
-
-    decrementTime(e) {
-        if(e.currentTarget.value === 'break') {
             if(this.state.breakLength == 1 || this.state.timerRunning)
                 return;
 
@@ -67,7 +49,29 @@ class App extends React.Component {
                 return;
 
             this.setState({
-                currentSession: this.state.currentSession-1
+                currentSession: this.state.currentSession-1,
+                timer: this.state.timer-60
+            });
+        }
+    }
+
+    decrementTime(e) {
+        if(e.currentTarget.value === 'break') {
+            if(this.state.breakLength == 30 || this.state.timerRunning)
+                return;
+
+            this.setState({
+                breakLength: this.state.breakLength+1
+            });
+        }
+
+        else {
+            if(this.state.currentSession == 60 || this.state.timerRunning)
+                return;
+
+            this.setState({
+                currentSession: this.state.currentSession+1,
+                timer: this.state.timer+60
             });
         }
     }
@@ -78,8 +82,11 @@ class App extends React.Component {
             breakLength: 5,
             timerRunning: false,
             timer: 1500,
-            cls: play
+            breakTimer: 300,
+            cls: play,
+            currentCycle: 'Session'
         });
+        clearInterval(this.interval);
     }
 
     playPause() {
@@ -88,22 +95,56 @@ class App extends React.Component {
                timerRunning: false,
                cls: play
             });
+            clearInterval(this.interval);
         }
 
         else {
             this.setState({
                 timerRunning: true,
-                cls: pause
+                cls: pause,
             });
+            this.interval = setInterval(() => {
+                if(this.state.currentCycle === 'Session') {
+                    if (this.state.timer === 0) {
+                        this.setState({
+                            currentCycle: 'Break',
+                            timer: this.state.currentSession*60
+                        });
+                    }
+                    else
+                        this.setState({timer: this.state.timer - 1});
+                }
+
+                else {
+                    if(this.state.breakTimer === 0) {
+                        this.setState({
+                            currentCycle: 'Session',
+                            breakTimer: this.state.breakLength*60
+                        });
+                    }
+                    else
+                        this.setState({breakTimer: this.state.breakTimer-1});
+                }
+            },1000);
         }
     }
 
     clockify() {
-        let minutes = Math.floor(this.state.timer / 60);
-        let seconds = this.state.timer - minutes * 60;
-        seconds = seconds < 10 ? '0' + seconds : seconds;
-        minutes = minutes < 10 ? '0' + minutes : minutes;
-        return minutes + ':' + seconds;
+        if(this.state.currentCycle === 'Session') {
+            let minutes = Math.floor(this.state.timer / 60);
+            let seconds = this.state.timer - minutes * 60;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            return minutes + ':' + seconds;
+        }
+
+        else {
+            let minutes = Math.floor(this.state.breakTimer / 60);
+            let seconds = this.state.breakTimer - minutes * 60;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            return minutes + ':' + seconds;
+        }
     }
 
     render() {
@@ -137,7 +178,7 @@ class App extends React.Component {
 
                 <div className="row">
                     <div className="timer-container">
-                        <div id="timer-label">Session</div>
+                        <div id="timer-label">{this.state.currentCycle}</div>
                         <div id="time-left">{this.clockify()}</div>
                     </div>
                 </div>
