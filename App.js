@@ -5,9 +5,9 @@ class TimerButtons extends React.Component {
     render() {
         return(
             <div className="item-container">
-                <button value={this.props.updateText} onClick={this.props.updatePos}><i className="fa fa-arrow-down"></i></button>
-                <span>{this.props.lenTxt}</span>
-                <button value={this.props.updateText} onClick={this.props.updateNeg}><i className="fa fa-arrow-up"></i></button>
+                <button id={this.props.id1} value={this.props.updateText} onClick={this.props.updatePos} className="btn item-btn"><i className="fa fa-arrow-down"></i></button>
+                <span id={this.props.id3} className="item-txt">{this.props.lenTxt}</span>
+                <button id={this.props.id2} value={this.props.updateText} onClick={this.props.updateNeg} className="btn item-btn"><i className="fa fa-arrow-up"></i></button>
             </div>
         );
     }
@@ -45,7 +45,7 @@ class App extends React.Component {
         }
 
         else {
-            if(this.state.currentSession == 15 || this.state.timerRunning)
+            if(this.state.currentSession == 1 || this.state.timerRunning)
                 return;
 
             this.setState({
@@ -57,7 +57,7 @@ class App extends React.Component {
 
     decrementTime(e) {
         if(e.currentTarget.value === 'break') {
-            if(this.state.breakLength == 30 || this.state.timerRunning)
+            if(this.state.breakLength == 60 || this.state.timerRunning)
                 return;
 
             this.setState({
@@ -86,6 +86,8 @@ class App extends React.Component {
             cls: play,
             currentCycle: 'Session'
         });
+        this.audioBeep.pause();
+        this.audioBeep.currentTime = 0;
         clearInterval(this.interval);
     }
 
@@ -106,6 +108,7 @@ class App extends React.Component {
             this.interval = setInterval(() => {
                 if(this.state.currentCycle === 'Session') {
                     if (this.state.timer === 0) {
+                        this.audioBeep.play();
                         this.setState({
                             currentCycle: 'Break',
                             timer: this.state.currentSession*60
@@ -117,6 +120,7 @@ class App extends React.Component {
 
                 else {
                     if(this.state.breakTimer === 0) {
+                        this.audioBeep.play();
                         this.setState({
                             currentCycle: 'Session',
                             breakTimer: this.state.breakLength*60
@@ -162,6 +166,9 @@ class App extends React.Component {
                             updatePos={this.incrementTime}
                             updateNeg={this.decrementTime}
                             updateText="break"
+                            id1="break-decrement"
+                            id2="break-increment"
+                            id3="break-length"
                         />
                     </div>
 
@@ -172,6 +179,9 @@ class App extends React.Component {
                             updatePos={this.incrementTime}
                             updateNeg={this.decrementTime}
                             updateText="session"
+                            id1="session-decrement"
+                            id2="session-increment"
+                            id3="session-length"
                         />
                     </div>
                 </div>
@@ -191,6 +201,9 @@ class App extends React.Component {
                 <div className="row">
                     <h3>Designed and Coded by Pranshu Teotia</h3>
                 </div>
+                <audio id="beep" preload="auto"
+                       src="https://goo.gl/65cBl1"
+                       ref={(audio) => { this.audioBeep = audio; }} />
             </div>
         );
     }

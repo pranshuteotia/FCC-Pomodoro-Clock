@@ -1,18 +1,81 @@
+body {background: #333;}
+
 #root {
     height: 97vh;
     width: 100%;
     display: flex;
+    color: #fff;
 }
 
 .container {
     margin: auto;
-    width: 60%;
+    border-radius: 2em;
     justify-items: center;
     display: flex;
     flex-direction: column;
+    background: #444;
 }
 
 .row {
     display: flex;
-    margin: auto;
+    margin: 20px auto;
+}
+
+.row > h1 {
+    font-family: sans-serif;
+    color: yellow;
+}
+
+.item {
+    margin: 0 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+#break-label, #session-label, #timer-label, #time-left{
+    font-size: 32px;
+    text-align: center;
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+.timer-container{
+    padding: 1em 3em;
+    border-radius: 0.5em;
+    border: 3px solid yellow;
+}
+
+.btn {
+    background: #ccc;
+    outline: none;
+    border-radius: 50%;
+    border: none;
+    margin: 0 10px;
+    height: 50px;
+    width: 50px;
+    cursor: pointer;
+}
+
+.btn > i {
+    font-size: 15px;
+}
+
+.item-container{
+    margin: 10px auto;
+    display: flex;
+}
+
+.item-txt {
+    font-size: 50px;
+    color: yellow;
+}
+
+#start_stop, #reset {
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin: 0 10px;
+    outline: none;
+    cursor: pointer;
 }
