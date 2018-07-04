@@ -1,0 +1,18 @@
+#root {
+    height: 97vh;
+    width: 100%;
+    display: flex;
+}
+
+.container {
+    margin: auto;
+    width: 60%;
+    justify-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    margin: auto;
+}
